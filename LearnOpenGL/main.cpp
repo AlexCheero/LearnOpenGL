@@ -2,6 +2,7 @@
 #include <GLFW/glfw3.h>
 
 #include <iostream>
+#include <cmath>
 
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
@@ -10,13 +11,14 @@ const char *vertexShaderSource = "#version 330 core\n"
     "layout (location = 0) in vec3 aPos;\n"
     "void main()\n"
     "{\n"
-    "   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
+    "   gl_Position = vec4(aPos, 1.0);\n"
     "}\0";
 const char *fragmentShaderSource = "#version 330 core\n"
     "out vec4 FragColor;\n"
+	"uniform vec4 ourColor;\n"
     "void main()\n"
     "{\n"
-    "   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
+    "   FragColor = ourColor;\n"
     "}\n\0";
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
@@ -119,6 +121,7 @@ int main(int argc, char* argv[])
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
 	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+	int fragmentColorLocation = glGetUniformLocation(shaderProgram, "ourColor");
 	while (!glfwWindowShouldClose(window))
 	{
 		processInput(window);
@@ -126,6 +129,11 @@ int main(int argc, char* argv[])
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		glUseProgram(shaderProgram);
+
+		double time = glfwGetTime();
+		float greenValue = static_cast<float>(sin(time) / 2.0 + 0.5);
+		glUniform4f(fragmentColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
+
 		glBindVertexArray(VAO);
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
