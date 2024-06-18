@@ -83,9 +83,10 @@ int main(int argc, char* argv[])
 #pragma endregion
 
 #pragma region Prepare texture
-	unsigned int texture;
-	glGenTextures(1, &texture);
-	glBindTexture(GL_TEXTURE_2D, texture);
+	unsigned int texture[2];
+	glGenTextures(2, texture);
+
+	glBindTexture(GL_TEXTURE_2D, texture[0]);
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -95,8 +96,7 @@ int main(int argc, char* argv[])
 
 	stbi_set_flip_vertically_on_load(true);
 	int width, height, nrChannels;
-	const char* textureName = "Resources/container.jpg";
-	unsigned char* data = stbi_load(textureName, &width, &height, &nrChannels, 0);
+	unsigned char* data = stbi_load("Resources/container.jpg", &width, &height, &nrChannels, 0);
 	if (data)
 	{
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
@@ -104,11 +104,32 @@ int main(int argc, char* argv[])
 	}
 	else
 	{
-		std::cout << "Failed to load texture: " << textureName << std::endl;
+		std::cout << "Failed to load texture: " << "Resources/container.jpg" << std::endl;
 	}
+
+	glBindTexture(GL_TEXTURE_2D, texture[1]);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	data = stbi_load("Resources/awesomeface.png", &width, &height, &nrChannels, 0);
+	if (data)
+	{
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+		glGenerateMipmap(GL_TEXTURE_2D);
+	}
+	else
+	{
+		std::cout << "Failed to load texture: " << "Resources/awesomeface.png" << std::endl;
+	}
+
 	stbi_image_free(data);
 	shader.use();
-	shader.setInt("ourTexture", 0);
+	shader.setInt("texture0", 0);
+	shader.setInt("texture1", 1);
 #pragma endregion
 
 	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
@@ -119,7 +140,9 @@ int main(int argc, char* argv[])
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, texture);
+		glBindTexture(GL_TEXTURE_2D, texture[0]);
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, texture[1]);
 
 		shader.use();
 		glBindVertexArray(VAO);
