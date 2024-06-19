@@ -23,6 +23,8 @@ public:
     // ------------------------------------------------------------------------
     void setFloat(const std::string& name, float value) const { glUniform1f(getUniformLocation(name), value); }
 
+    void setMatrix4(const std::string& name, GLfloat* value) const { glUniformMatrix4fv(getUniformLocation(name), 1, GL_FALSE, value); }
+
 private:
     void checkCompileErrors(unsigned int shader, std::string type);
     GLint getUniformLocation(const std::string& name) const

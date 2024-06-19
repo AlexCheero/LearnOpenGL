@@ -136,6 +136,12 @@ int main(int argc, char* argv[])
 	shader.setInt("texture1", 1);
 #pragma endregion
 
+	glm::mat4 transform = glm::mat4(1.0f);
+	transform = glm::rotate(transform, glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+	transform = glm::scale(transform, glm::vec3(0.5f, 0.5f, 0.5f));
+	shader.use();
+	shader.setMatrix4("transform", glm::value_ptr(transform));
+
 	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 	while (!glfwWindowShouldClose(window))
 	{
@@ -149,6 +155,12 @@ int main(int argc, char* argv[])
 		glBindTexture(GL_TEXTURE_2D, texture[1]);
 
 		shader.use();
+
+		//glm::mat4 transform = glm::mat4(1.0f);
+		//transform = glm::translate(transform, glm::vec3(0.5f, -0.5f, 0.0f));
+		//transform = glm::rotate(transform, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
+		//shader.setMatrix4("transform", glm::value_ptr(transform));
+
 		glBindVertexArray(VAO);
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
