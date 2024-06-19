@@ -136,11 +136,19 @@ int main(int argc, char* argv[])
 	shader.setInt("texture1", 1);
 #pragma endregion
 
-	glm::mat4 transform = glm::mat4(1.0f);
-	transform = glm::rotate(transform, glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-	transform = glm::scale(transform, glm::vec3(0.5f, 0.5f, 0.5f));
 	shader.use();
-	shader.setMatrix4("transform", glm::value_ptr(transform));
+
+	glm::mat4 model = glm::mat4(1.0f);
+	model = glm::rotate(model, glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+	glm::mat4 view = glm::mat4(1.0f);
+	view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
+	const float nearPlane = 0.1f;
+	const float farPlane = 100.0f;
+	glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH / SCR_HEIGHT, nearPlane, farPlane);
+
+	shader.setMatrix4("model", glm::value_ptr(model));
+	shader.setMatrix4("view", glm::value_ptr(view));
+	shader.setMatrix4("projection", glm::value_ptr(projection));
 
 	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 	while (!glfwWindowShouldClose(window))
@@ -155,11 +163,6 @@ int main(int argc, char* argv[])
 		glBindTexture(GL_TEXTURE_2D, texture[1]);
 
 		shader.use();
-
-		//glm::mat4 transform = glm::mat4(1.0f);
-		//transform = glm::translate(transform, glm::vec3(0.5f, -0.5f, 0.0f));
-		//transform = glm::rotate(transform, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
-		//shader.setMatrix4("transform", glm::value_ptr(transform));
 
 		glBindVertexArray(VAO);
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
