@@ -20,10 +20,18 @@ glm::vec3 cameraPos(0.0f, 0.0f, 3.0f);
 glm::vec3 cameraFront(0.0f, 0.0f, -1.0f);
 glm::vec3 cameraUp(0.0f, 1.0f, 0.0f);
 
+float lastX = SCR_WIDTH / 2, lastY = SCR_HEIGHT / 2;
+bool firstMouse = false;
+float yaw = -90.0f;
+float pitch = 0.0f;
+float fov = 45.0f;
+
 float prevFrame;
 float deltaTime;
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
+void mouse_callback(GLFWwindow* window, double xpos, double ypos);
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 void processInput(GLFWwindow* window);
 
 int main(int argc, char* argv[])
@@ -42,6 +50,10 @@ int main(int argc, char* argv[])
 	}
 	glfwMakeContextCurrent(window);
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+	glfwSetCursorPosCallback(window, mouse_callback);
+	glfwSetScrollCallback(window, scroll_callback);
+
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 	{
@@ -236,6 +248,43 @@ int main(int argc, char* argv[])
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
 	glViewport(0, 0, width, height);
+}
+
+void mouse_callback(GLFWwindow* window, double xpos, double ypos)
+{
+	if (firstMouse)
+	{
+		lastX = xpos;
+		lastY = ypos;
+		firstMouse = false;
+	}
+
+	const float sensitivity = 1.0f;
+	float xoffset = (xpos - lastX) * deltaTime * sensitivity;
+	float yoffset = (lastY - ypos) * deltaTime * sensitivity;
+	lastX = xpos;
+	lastY = ypos;
+
+	yaw += xoffset;
+	const float pitchBound = 89.0f;
+	pitch = glm::clamp(pitch + yoffset, -pitchBound, pitchBound);
+
+	float sinYaw = sin(glm::radians(yaw));
+	float cosYaw = cos(glm::radians(yaw));
+	float sinPitch = sin(glm::radians(pitch));
+	float cosPitch = cos(glm::radians(pitch));
+
+	glm::vec3 dir;
+	dir.x = cosYaw * cosPitch;
+	dir.y = sinPitch;
+	dir.z = sinYaw * cosPitch;
+
+	cameraFront = glm::normalize(dir);
+}
+
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
+{
+
 }
 
 void processInput(GLFWwindow* window)
