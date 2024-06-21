@@ -16,6 +16,13 @@
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 
+glm::vec3 cameraPos(0.0f, 0.0f, 3.0f);
+glm::vec3 cameraFront(0.0f, 0.0f, -1.0f);
+glm::vec3 cameraUp(0.0f, 1.0f, 0.0f);
+
+float prevFrame;
+float deltaTime;
+
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow* window);
 
@@ -177,19 +184,20 @@ int main(int argc, char* argv[])
 
 	shader.use();
 
-	glm::mat4 view = glm::mat4(1.0f);
-	view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
 	const float nearPlane = 0.1f;
 	const float farPlane = 100.0f;
 	glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH / SCR_HEIGHT, nearPlane, farPlane);
 
-	shader.setMatrix4("view", glm::value_ptr(view));
 	shader.setMatrix4("projection", glm::value_ptr(projection));
 
 	glEnable(GL_DEPTH_TEST);
 	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 	while (!glfwWindowShouldClose(window))
 	{
+		float frame = glfwGetTime();
+		deltaTime = frame - prevFrame;
+		prevFrame = frame;
+
 		processInput(window);
 		
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -200,6 +208,9 @@ int main(int argc, char* argv[])
 		glBindTexture(GL_TEXTURE_2D, texture[1]);
 
 		shader.use();
+
+		glm::mat4 view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
+		shader.setMatrix4("view", glm::value_ptr(view));
 
 		glBindVertexArray(VAO);
 		for (int i = 0; i < 10; i++)
@@ -231,4 +242,17 @@ void processInput(GLFWwindow* window)
 {
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
+
+	const float cameraSpeed = 10.0f;
+	float cameraSpeedDelta = deltaTime * cameraSpeed;
+	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+		cameraPos += cameraSpeedDelta * cameraFront;
+	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+		cameraPos -= cameraSpeedDelta * cameraFront;
+	
+	glm::vec3 cameraRight = glm::normalize(glm::cross(cameraFront, cameraUp));
+	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+		cameraPos -= cameraSpeedDelta * cameraRight;
+	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+		cameraPos += cameraSpeedDelta * cameraRight;
 }
