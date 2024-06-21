@@ -25,6 +25,8 @@ bool firstMouse = false;
 float yaw = -90.0f;
 float pitch = 0.0f;
 float fov = 45.0f;
+const float nearPlane = 0.1f;
+const float farPlane = 100.0f;
 
 float prevFrame;
 float deltaTime;
@@ -196,12 +198,6 @@ int main(int argc, char* argv[])
 
 	shader.use();
 
-	const float nearPlane = 0.1f;
-	const float farPlane = 100.0f;
-	glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH / SCR_HEIGHT, nearPlane, farPlane);
-
-	shader.setMatrix4("projection", glm::value_ptr(projection));
-
 	glEnable(GL_DEPTH_TEST);
 	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 	while (!glfwWindowShouldClose(window))
@@ -223,6 +219,8 @@ int main(int argc, char* argv[])
 
 		glm::mat4 view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
 		shader.setMatrix4("view", glm::value_ptr(view));
+		glm::mat4 projection = glm::perspective(glm::radians(fov), (float)SCR_WIDTH / SCR_HEIGHT, nearPlane, farPlane);
+		shader.setMatrix4("projection", glm::value_ptr(projection));
 
 		glBindVertexArray(VAO);
 		for (int i = 0; i < 10; i++)
@@ -284,7 +282,9 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
-
+	const float minFov = 30.0f;
+	const float maxFov = 90.0f;
+	fov = glm::clamp(fov - (float)yoffset, minFov, maxFov);
 }
 
 void processInput(GLFWwindow* window)
