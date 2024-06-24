@@ -36,7 +36,7 @@ public:
 
 	void Rotate(float xDelta, float yDelta, float deltaTime);
 	void SetFov(float offset) { fov = glm::clamp(fov - offset, minFov, maxFov); }
-	void Move(glm::vec2 dir, float deltaTime, bool normalizeDir = true);
+	void Move(glm::vec3 dir, float deltaTime, bool normalizeDir = true);
 	glm::vec3 GetCameraRight() { return glm::normalize(glm::cross(cameraFront, WorldUp)); }
 	//not used yet
 	glm::vec3 GetCameraUp() { return glm::normalize(glm::cross(GetCameraRight(), cameraFront)); }

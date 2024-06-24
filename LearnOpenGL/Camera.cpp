@@ -21,13 +21,13 @@ void Camera::Rotate(float xDelta, float yDelta, float deltaTime)
 	cameraFront = glm::normalize(dir);
 }
 
-void Camera::Move(glm::vec2 dir, float deltaTime, bool normalizeDir /*= true*/)
+void Camera::Move(glm::vec3 dir, float deltaTime, bool normalizeDir /*= true*/)
 {
-	if (dir.x == 0 && dir.y == 0)
+	if (dir.x == 0 && dir.y == 0 && dir.z == 0)
 		return;
 
 	if (normalizeDir)
 		dir = glm::normalize(dir);
 	float cameraSpeedDelta = deltaTime * cameraSpeed;
-	cameraPos += cameraSpeedDelta * (dir.y * cameraFront + dir.x * GetCameraRight());
+	cameraPos += cameraSpeedDelta * (dir.z * cameraFront + dir.x * GetCameraRight() + dir.y * WorldUp);
 }

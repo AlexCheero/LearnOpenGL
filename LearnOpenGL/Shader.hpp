@@ -2,6 +2,10 @@
 
 #include <glad/glad.h> // include glad to get all the required OpenGL headers
 
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
 #include <string>
 #include <unordered_map>
 
@@ -24,6 +28,9 @@ public:
     void setFloat(const std::string& name, float value) const { glUniform1f(getUniformLocation(name), value); }
 
     void setMatrix4(const std::string& name, GLfloat* value) const { glUniformMatrix4fv(getUniformLocation(name), 1, GL_FALSE, value); }
+
+    void setVec3(const std::string& name, const glm::vec3& value) const { glUniform3fv(getUniformLocation(name), 1, glm::value_ptr(value)); }
+    void setVec3(const std::string& name, float x, float y, float z) const { glUniform3f(getUniformLocation(name), x, y, z); }
 
 private:
     void checkCompileErrors(unsigned int shader, std::string type);
