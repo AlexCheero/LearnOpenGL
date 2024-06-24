@@ -16,6 +16,7 @@ public:
     unsigned int ID;
 
     // constructor reads and builds the shader
+    Shader(const std::string& vertexPath, const std::string& fragmentPath) : Shader(vertexPath.c_str(), fragmentPath.c_str()) {}
     Shader(const char* vertexPath, const char* fragmentPath);
     ~Shader() { glDeleteProgram(ID); }
     // use/activate the shader
@@ -28,6 +29,7 @@ public:
     void setFloat(const std::string& name, float value) const { glUniform1f(getUniformLocation(name), value); }
 
     void setMatrix4(const std::string& name, GLfloat* value) const { glUniformMatrix4fv(getUniformLocation(name), 1, GL_FALSE, value); }
+    void setMatrix3(const std::string& name, GLfloat* value) const { glUniformMatrix3fv(getUniformLocation(name), 1, GL_FALSE, value); }
 
     void setVec3(const std::string& name, const glm::vec3& value) const { glUniform3fv(getUniformLocation(name), 1, glm::value_ptr(value)); }
     void setVec3(const std::string& name, float x, float y, float z) const { glUniform3f(getUniformLocation(name), x, y, z); }
