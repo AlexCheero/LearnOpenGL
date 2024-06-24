@@ -12,24 +12,18 @@
 #include <cmath>
 
 #include "Shader.hpp"
+#include "Camera.hpp"
 
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 
-glm::vec3 cameraPos(0.0f, 0.0f, 3.0f);
-glm::vec3 cameraFront(0.0f, 0.0f, -1.0f);
-glm::vec3 cameraUp(0.0f, 1.0f, 0.0f);
-
 float lastX = SCR_WIDTH / 2, lastY = SCR_HEIGHT / 2;
 bool firstMouse = false;
-float yaw = -90.0f;
-float pitch = 0.0f;
-float fov = 45.0f;
-const float nearPlane = 0.1f;
-const float farPlane = 100.0f;
 
 float prevFrame;
 float deltaTime;
+
+Camera camera;
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
@@ -217,9 +211,9 @@ int main(int argc, char* argv[])
 
 		shader.use();
 
-		glm::mat4 view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
+		glm::mat4 view = camera.GetViewMatrix();
 		shader.setMatrix4("view", glm::value_ptr(view));
-		glm::mat4 projection = glm::perspective(glm::radians(fov), (float)SCR_WIDTH / SCR_HEIGHT, nearPlane, farPlane);
+		glm::mat4 projection = camera.GetPerspectiveMatrix((float)SCR_WIDTH / SCR_HEIGHT);
 		shader.setMatrix4("projection", glm::value_ptr(projection));
 
 		glBindVertexArray(VAO);
@@ -257,34 +251,14 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 		firstMouse = false;
 	}
 
-	const float sensitivity = 1.0f;
-	float xoffset = (xpos - lastX) * deltaTime * sensitivity;
-	float yoffset = (lastY - ypos) * deltaTime * sensitivity;
+	camera.Rotate(xpos - lastX, lastY - ypos, deltaTime);
 	lastX = xpos;
 	lastY = ypos;
-
-	yaw += xoffset;
-	const float pitchBound = 89.0f;
-	pitch = glm::clamp(pitch + yoffset, -pitchBound, pitchBound);
-
-	float sinYaw = sin(glm::radians(yaw));
-	float cosYaw = cos(glm::radians(yaw));
-	float sinPitch = sin(glm::radians(pitch));
-	float cosPitch = cos(glm::radians(pitch));
-
-	glm::vec3 dir;
-	dir.x = cosYaw * cosPitch;
-	dir.y = sinPitch;
-	dir.z = sinYaw * cosPitch;
-
-	cameraFront = glm::normalize(dir);
 }
 
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
-	const float minFov = 30.0f;
-	const float maxFov = 90.0f;
-	fov = glm::clamp(fov - (float)yoffset, minFov, maxFov);
+	camera.SetFov((float)yoffset);
 }
 
 void processInput(GLFWwindow* window)
@@ -292,16 +266,14 @@ void processInput(GLFWwindow* window)
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
 
-	const float cameraSpeed = 10.0f;
-	float cameraSpeedDelta = deltaTime * cameraSpeed;
+	glm::vec2 dir{};
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-		cameraPos += cameraSpeedDelta * cameraFront;
+		dir.y += 1;
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-		cameraPos -= cameraSpeedDelta * cameraFront;
-	
-	glm::vec3 cameraRight = glm::normalize(glm::cross(cameraFront, cameraUp));
+		dir.y -= 1;
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-		cameraPos -= cameraSpeedDelta * cameraRight;
+		dir.x -= 1;
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-		cameraPos += cameraSpeedDelta * cameraRight;
+		dir.x += 1;
+	camera.Move(dir, deltaTime);
 }
