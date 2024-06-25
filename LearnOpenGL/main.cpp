@@ -187,7 +187,8 @@ int main(int argc, char* argv[])
 		glm::mat4 projection = camera.GetPerspectiveMatrix((float)SCR_WIDTH / SCR_HEIGHT);
 		lightingShader.setMatrix4("projection", glm::value_ptr(projection));
 
-		lightingShader.setVec3("lightPos", lightPos);
+		glm::vec3 lightInViewSpace = view * glm::vec4(lightPos, 1.0f);
+		lightingShader.setVec3("lightPos", lightInViewSpace);
 		lightingShader.setVec3("viewPos", camera.CameraPos());
 
 		glBindVertexArray(VAO);
@@ -197,7 +198,7 @@ int main(int argc, char* argv[])
 			float angle = 20.0f * i;
 			model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
 			lightingShader.setMatrix4("model", glm::value_ptr(model));
-			glm::mat3 normalMatrix = glm::mat3(glm::transpose(glm::inverse(model)));
+			glm::mat3 normalMatrix = glm::mat3(glm::transpose(glm::inverse(view * model)));
 			lightingShader.setMatrix3("normalMatrix", glm::value_ptr(normalMatrix));
 			glDrawArrays(GL_TRIANGLES, 0, 36);
 		}
