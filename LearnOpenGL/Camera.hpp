@@ -28,6 +28,8 @@ class Camera
 	float fov = 45.0f;
 
 public:
+	glm::vec3 CameraPos() { return cameraPos; }
+
 	Camera() : cameraPos(0.0f, 0.0f, 3.0f), cameraFront(0.0f, 0.0f, -1.0f), cameraUp(0.0f, 1.0f, 0.0f), yaw(-90.0f), pitch(0.0f), fov(45.0f)
 	{}
 

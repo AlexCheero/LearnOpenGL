@@ -121,7 +121,8 @@ int main(int argc, char* argv[])
 	};
 	size_t cubePositionsCount = sizeof(cubePositions) / sizeof(glm::vec3);
 	
-	glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
+	//glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
+	glm::vec3 lightPos(0.0f, 0.0f, 5.0f);
 
 #pragma region Preparing vertex attributes
 	unsigned int VBO, VAO;
@@ -187,6 +188,7 @@ int main(int argc, char* argv[])
 		lightingShader.setMatrix4("projection", glm::value_ptr(projection));
 
 		lightingShader.setVec3("lightPos", lightPos);
+		lightingShader.setVec3("viewPos", camera.CameraPos());
 
 		glBindVertexArray(VAO);
 		for (int i = 0; i < cubePositionsCount; i++)
