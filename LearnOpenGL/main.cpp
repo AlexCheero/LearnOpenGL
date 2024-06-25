@@ -71,7 +71,8 @@ int main(int argc, char* argv[])
 	Shader lightingShader(ShaderPath("lightingShader.vs"), ShaderPath("lightingShader.fs"));
 	Shader lightShader(ShaderPath("lightShader.vs"), ShaderPath("lightShader.fs"));
 
-	float vertices[] = {
+	float vertices[] =
+	{
 		-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
 		 0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
 		 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
@@ -121,7 +122,6 @@ int main(int argc, char* argv[])
 	};
 	size_t cubePositionsCount = sizeof(cubePositions) / sizeof(glm::vec3);
 	
-	//glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
 	glm::vec3 lightPos(0.0f, 0.0f, 5.0f);
 
 #pragma region Preparing vertex attributes
@@ -164,6 +164,8 @@ int main(int argc, char* argv[])
 	lightingShader.setVec3("objectColor", 1.0f, 0.5f, 0.31f);
 	lightingShader.setVec3("lightColor", lightColor);
 	lightingShader.setFloat("ambientStrength", 0.1f);
+	lightingShader.setFloat("shininess", 32.0f);
+	lightingShader.setFloat("specularStrength", 0.5f);
 
 	lightShader.use();
 	lightShader.setVec3("lightColor", lightColor);

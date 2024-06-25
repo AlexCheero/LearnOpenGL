@@ -8,6 +8,8 @@ uniform vec3 objectColor;
 uniform vec3 lightColor;
 uniform float ambientStrength;
 uniform vec3 lightPos;
+uniform float shininess;
+uniform float specularStrength;
 
 void main()
 {
@@ -22,8 +24,7 @@ void main()
     vec3 viewDir = normalize(-FragPos);
     vec3 reflectDir = reflect(-lightDir, norm);
 
-    float specularStrength = 0.5;
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), 1024);
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0), shininess);
     vec3 specular = specularStrength * spec * lightColor;
 
     vec3 result = (ambient + diffuse + specular) * objectColor;
