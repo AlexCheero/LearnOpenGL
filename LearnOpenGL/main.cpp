@@ -162,6 +162,8 @@ int main(int argc, char* argv[])
 
 	const char* diffuseMapName = "Resources/container2.png";
 	unsigned int diffuseMap = loadTexture(diffuseMapName);
+	const char* specularMapName = "Resources/container2_specular.png";
+	unsigned int specularMap = loadTexture(specularMapName);
 
 	//TODO: wrap into struct
 	glm::vec3 lightPos(0.0f, 0.0f, 5.0f);
@@ -179,7 +181,7 @@ int main(int argc, char* argv[])
 	lightingShader.setFloat("specularStrength", 1);
 
 	lightingShader.setInt("material.diffuse", 0);
-	lightingShader.setVec3("material.specular", 0.5f, 0.5f, 0.5f);
+	lightingShader.setInt("material.specular", 1);
 	lightingShader.setFloat("material.shininess", 32.0f);
 
 	lightShader.use();
@@ -210,6 +212,8 @@ int main(int argc, char* argv[])
 
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, diffuseMap);
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, specularMap);
 
 		glBindVertexArray(VAO);
 		for (int i = 0; i < cubePositionsCount; i++)
