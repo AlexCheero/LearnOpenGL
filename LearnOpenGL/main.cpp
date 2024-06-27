@@ -121,8 +121,6 @@ int main(int argc, char* argv[])
 		glm::vec3(0.0f,  0.0f,  0.0f)
 	};
 	size_t cubePositionsCount = sizeof(cubePositions) / sizeof(glm::vec3);
-	
-	glm::vec3 lightPos(0.0f, 0.0f, 5.0f);
 
 #pragma region Preparing vertex attributes
 	unsigned int VBO, VAO;
@@ -158,17 +156,28 @@ int main(int argc, char* argv[])
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 #pragma endregion
 
-	glm::vec3 lightColor(1.0f, 1.0f, 1.0f);
+	//TODO: wrap into struct
+	glm::vec3 lightPos(0.0f, 0.0f, 5.0f);
+	glm::vec3 lightAmbient(0.2f, 0.2f, 0.2f);
+	glm::vec3 lightDiffuse(0.5f, 0.5f, 0.5f);// darken diffuse light a bit
+	glm::vec3 lightSpecular(1.0f, 1.0f, 1.0f);
 
 	lightingShader.use();
-	lightingShader.setVec3("objectColor", 1.0f, 0.5f, 0.31f);
-	lightingShader.setVec3("lightColor", lightColor);
-	lightingShader.setFloat("ambientStrength", 0.1f);
-	lightingShader.setFloat("shininess", 32.0f);
-	lightingShader.setFloat("specularStrength", 0.5f);
+
+	lightingShader.setVec3("light.ambient", lightAmbient);
+	lightingShader.setVec3("light.diffuse", lightDiffuse);
+	lightingShader.setVec3("light.specular", lightSpecular);
+
+	lightingShader.setFloat("ambientStrength", 1);
+	lightingShader.setFloat("specularStrength", 1);
+
+	lightingShader.setVec3("material.ambient", 1.0f, 0.5f, 0.31f);
+	lightingShader.setVec3("material.diffuse", 1.0f, 0.5f, 0.31f);
+	lightingShader.setVec3("material.specular", 0.5f, 0.5f, 0.5f);
+	lightingShader.setFloat("material.shininess", 32.0f);
 
 	lightShader.use();
-	lightShader.setVec3("lightColor", lightColor);
+	lightShader.setVec3("lightColor", lightSpecular);
 
 	glEnable(GL_DEPTH_TEST);
 	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
@@ -190,7 +199,7 @@ int main(int argc, char* argv[])
 		lightingShader.setMatrix4("projection", glm::value_ptr(projection));
 
 		glm::vec3 lightInViewSpace = view * glm::vec4(lightPos, 1.0f);
-		lightingShader.setVec3("lightPos", lightInViewSpace);
+		lightingShader.setVec3("light.position", lightInViewSpace);
 		lightingShader.setVec3("viewPos", camera.CameraPos());
 
 		glBindVertexArray(VAO);
