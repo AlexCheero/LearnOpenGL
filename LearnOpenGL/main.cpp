@@ -186,6 +186,10 @@ int main(int argc, char* argv[])
 	lightingShader.setVec3("light.diffuse", lightDiffuse);
 	lightingShader.setVec3("light.specular", lightSpecular);
 
+	lightingShader.setFloat("light.constant", 1.0f);
+	lightingShader.setFloat("light.linear", 0.09f);
+	lightingShader.setFloat("light.quadratic", 0.032f);
+
 	lightingShader.setFloat("ambientStrength", 1);
 	lightingShader.setFloat("specularStrength", 1);
 
@@ -215,14 +219,14 @@ int main(int argc, char* argv[])
 		glm::mat4 projection = camera.GetPerspectiveMatrix((float)SCR_WIDTH / SCR_HEIGHT);
 		lightingShader.setMatrix4("projection", glm::value_ptr(projection));
 
-		//glm::vec3 lightInViewSpace = view * glm::vec4(lightPos, 1.0f);
-		//lightingShader.setVec3("light.position", lightInViewSpace);
+		glm::vec3 lightInViewSpace = view * glm::vec4(lightPos, 1.0f);
+		lightingShader.setVec3("light.position", lightInViewSpace);
 
-		glm::vec3 lightDir(-0.2f, -1.0f, -0.3f);
-		//glm::mat3 lightDirNormalMatrix = glm::transpose(glm::inverse(glm::mat3(view)));
-		glm::mat3 lightDirNormalMatrix = glm::mat3(view);
-		glm::vec3 lightDirInViewSpace = lightDirNormalMatrix * lightDir;
-		lightingShader.setVec3("light.direction", lightDirInViewSpace);
+		//glm::vec3 lightDir(-0.2f, -1.0f, -0.3f);
+		////glm::mat3 lightDirNormalMatrix = glm::transpose(glm::inverse(glm::mat3(view)));
+		//glm::mat3 lightDirNormalMatrix = glm::mat3(view);
+		//glm::vec3 lightDirInViewSpace = lightDirNormalMatrix * lightDir;
+		//lightingShader.setVec3("light.direction", lightDirInViewSpace);
 
 		lightingShader.setVec3("viewPos", camera.CameraPos());
 
