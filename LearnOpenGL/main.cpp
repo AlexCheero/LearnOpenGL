@@ -120,7 +120,16 @@ int main(int argc, char* argv[])
 
 	glm::vec3 cubePositions[] =
 	{
-		glm::vec3(0.0f,  0.0f,  0.0f)
+		glm::vec3(0.0f,  0.0f,  0.0f),
+		glm::vec3(2.0f,  5.0f, -15.0f),
+		glm::vec3(-1.5f, -2.2f, -2.5f),
+		glm::vec3(-3.8f, -2.0f, -12.3f),
+		glm::vec3(2.4f, -0.4f, -3.5f),
+		glm::vec3(-1.7f,  3.0f, -7.5f),
+		glm::vec3(1.3f, -2.0f, -2.5f),
+		glm::vec3(1.5f,  2.0f, -2.5f),
+		glm::vec3(1.5f,  0.2f, -1.5f),
+		glm::vec3(-1.3f,  1.0f, -1.5f)
 	};
 	size_t cubePositionsCount = sizeof(cubePositions) / sizeof(glm::vec3);
 
@@ -206,8 +215,15 @@ int main(int argc, char* argv[])
 		glm::mat4 projection = camera.GetPerspectiveMatrix((float)SCR_WIDTH / SCR_HEIGHT);
 		lightingShader.setMatrix4("projection", glm::value_ptr(projection));
 
-		glm::vec3 lightInViewSpace = view * glm::vec4(lightPos, 1.0f);
-		lightingShader.setVec3("light.position", lightInViewSpace);
+		//glm::vec3 lightInViewSpace = view * glm::vec4(lightPos, 1.0f);
+		//lightingShader.setVec3("light.position", lightInViewSpace);
+
+		glm::vec3 lightDir(-0.2f, -1.0f, -0.3f);
+		//glm::mat3 lightDirNormalMatrix = glm::transpose(glm::inverse(glm::mat3(view)));
+		glm::mat3 lightDirNormalMatrix = glm::mat3(view);
+		glm::vec3 lightDirInViewSpace = lightDirNormalMatrix * lightDir;
+		lightingShader.setVec3("light.direction", lightDirInViewSpace);
+
 		lightingShader.setVec3("viewPos", camera.CameraPos());
 
 		glActiveTexture(GL_TEXTURE0);
