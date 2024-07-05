@@ -53,7 +53,8 @@ in vec2 TexCoords;
 
 uniform Material material;
 uniform SpotLight spotLight;
-uniform PointLight pointLight;
+#define NR_POINT_LIGHTS 4
+uniform PointLight pointLights[NR_POINT_LIGHTS];
 uniform DirectionalLight dirLight;
 
 #define ATTENUATION(light, distance) (1.0 / (light.constant + (light.linear * distance) + (light.quadratic * distance * distance)))
@@ -116,8 +117,12 @@ void main()
     //vec3 spotLightColor = CalcSpotLight(spotLight, norm, viewDir, specularColor);
     //FragColor = vec4(spotLightColor * diffuseColor, 1.0);
 
-    vec3 spotLightColor = CalcPointLight(pointLight, norm, viewDir, specularColor);
-    FragColor = vec4(spotLightColor * diffuseColor, 1.0);
+    vec3 result;
+    for (int i = 0; i < NR_POINT_LIGHTS; i++)
+    {
+        result += CalcPointLight(pointLights[i], norm, viewDir, specularColor);
+    }
+    FragColor = vec4(result * diffuseColor, 1.0);
 
     //vec3 spotLightColor = CalcDirLight(dirLight, norm, viewDir, specularColor);
     //FragColor = vec4(spotLightColor * diffuseColor, 1.0);
