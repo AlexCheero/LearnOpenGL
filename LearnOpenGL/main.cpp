@@ -231,11 +231,14 @@ int main(int argc, char* argv[])
 			lightingShader.setFloat(pointLightName + ".quadratic", 0.032f);
 		}
 
-		//glm::vec3 lightDir(-0.2f, -1.0f, -0.3f);
-		////glm::mat3 lightDirNormalMatrix = glm::transpose(glm::inverse(glm::mat3(view)));
-		//glm::mat3 lightDirNormalMatrix = glm::mat3(view);
-		//glm::vec3 lightDirInViewSpace = lightDirNormalMatrix * lightDir;
-		//lightingShader.setVec3("dirLight.direction", lightDirInViewSpace);
+		glm::vec3 lightDir(-0.2f, -1.0f, -0.3f);
+		//glm::mat3 lightDirNormalMatrix = glm::transpose(glm::inverse(glm::mat3(view)));
+		glm::mat3 lightDirNormalMatrix = glm::mat3(view);
+		glm::vec3 lightDirInViewSpace = lightDirNormalMatrix * lightDir;
+		lightingShader.setVec3("dirLight.direction", lightDirInViewSpace);
+		lightingShader.setVec3("dirLight.ambient", 0.05f, 0.05f, 0.05f);
+		lightingShader.setVec3("dirLight.diffuse", 0.4f, 0.4f, 0.4f);
+		lightingShader.setVec3("dirLight.specular", 0.5f, 0.5f, 0.5f);
 
 		//glm::vec3 camPosInViewSpace = view * glm::vec4(camera.CameraPos(), 1.0f);
 		//lightingShader.setVec3("spotLight.position", camPosInViewSpace);

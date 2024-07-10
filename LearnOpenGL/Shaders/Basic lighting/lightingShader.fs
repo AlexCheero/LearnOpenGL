@@ -113,19 +113,17 @@ void main()
     vec3 specularColor = texture(material.specular, TexCoords).rgb;
     vec3 diffuseColor = texture(material.diffuse, TexCoords).rgb;
     vec3 viewDir = normalize(-FragPos);
-    
-    //vec3 spotLightColor = CalcSpotLight(spotLight, norm, viewDir, specularColor);
-    //FragColor = vec4(spotLightColor * diffuseColor, 1.0);
 
     vec3 result;
+    //Directional Light
+    result += CalcDirLight(dirLight, norm, viewDir, specularColor);
+    //Point Lights
     for (int i = 0; i < NR_POINT_LIGHTS; i++)
-    {
         result += CalcPointLight(pointLights[i], norm, viewDir, specularColor);
-    }
-    FragColor = vec4(result * diffuseColor, 1.0);
+    //Spot Light
+    //result += CalcSpotLight(spotLight, norm, viewDir, specularColor);
 
-    //vec3 spotLightColor = CalcDirLight(dirLight, norm, viewDir, specularColor);
-    //FragColor = vec4(spotLightColor * diffuseColor, 1.0);
+    FragColor = vec4(result * diffuseColor, 1.0);
 }
 
 /*
