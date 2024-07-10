@@ -188,9 +188,6 @@ int main(int argc, char* argv[])
 	glm::vec3 lightDiffuse(0.5f, 0.5f, 0.5f);// darken diffuse light a bit
 	glm::vec3 lightSpecular(1.0f, 1.0f, 1.0f);
 
-	//lightingShader.setFloat("spotLight.cutOff", glm::cos(glm::radians(12.5f)));
-	//lightingShader.setFloat("spotLight.outerCutOff", glm::cos(glm::radians(17.5f)));;
-
 	lightShader.use();
 	lightShader.setVec3("lightColor", lightSpecular);
 
@@ -240,9 +237,17 @@ int main(int argc, char* argv[])
 		lightingShader.setVec3("dirLight.diffuse", 0.4f, 0.4f, 0.4f);
 		lightingShader.setVec3("dirLight.specular", 0.5f, 0.5f, 0.5f);
 
-		//glm::vec3 camPosInViewSpace = view * glm::vec4(camera.CameraPos(), 1.0f);
-		//lightingShader.setVec3("spotLight.position", camPosInViewSpace);
-		//lightingShader.setVec3("spotLight.direction", glm::mat3(view) * camera.CameraFront());
+		glm::vec3 camPosInViewSpace = view * glm::vec4(camera.CameraPos(), 1.0f);
+		lightingShader.setVec3("spotLight.position", camPosInViewSpace);
+		lightingShader.setVec3("spotLight.direction", glm::mat3(view) * camera.CameraFront());
+		lightingShader.setVec3("spotLight.ambient", 0.0f, 0.0f, 0.0f);
+		lightingShader.setVec3("spotLight.diffuse", 1.0f, 1.0f, 1.0f);
+		lightingShader.setVec3("spotLight.specular", 1.0f, 1.0f, 1.0f);
+		lightingShader.setFloat("spotLight.constant", 1.0f);
+		lightingShader.setFloat("spotLight.linear", 0.09f);
+		lightingShader.setFloat("spotLight.quadratic", 0.032f);
+		lightingShader.setFloat("spotLight.cutOff", glm::cos(glm::radians(12.5f)));
+		lightingShader.setFloat("spotLight.outerCutOff", glm::cos(glm::radians(17.5f)));
 
 		lightingShader.setVec3("viewPos", camera.CameraPos());
 

@@ -121,7 +121,7 @@ void main()
     for (int i = 0; i < NR_POINT_LIGHTS; i++)
         result += CalcPointLight(pointLights[i], norm, viewDir, specularColor);
     //Spot Light
-    //result += CalcSpotLight(spotLight, norm, viewDir, specularColor);
+    result += CalcSpotLight(spotLight, norm, viewDir, specularColor);
 
     FragColor = vec4(result * diffuseColor, 1.0);
 }
